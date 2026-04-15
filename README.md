@@ -1,59 +1,98 @@
 # Booking flow
 
-**This README covers:** running the app locally or with Docker → running browser (E2E) tests → where code and test data live → which API routes exist → submission artefacts.
+UK skip hire **multi-step booking** demo: Next.js UI, in-app API routes, deterministic fixtures, and Playwright E2E checks.
 
 ---
 
-## Quick start
+## Contents
 
-**Run locally**
+| Section | What you’ll find |
+| --- | --- |
+| [Run the app](#run-the-app) | Local Node or Docker → open **http://localhost:3000** |
+| [Playwright (E2E)](#playwright-e2e) | Install browsers, run `npm test`, reports |
+| [Repository layout](#repository-layout) | Where `ui/`, `automation/`, and docs live |
+| [Fixture postcodes](#fixture-postcodes) | Deterministic demo data |
+| [API (contract)](#api-contract) | REST routes the UI uses |
+| [Mocking & data](#mocking--data) | How responses are produced |
+| [Submission artefacts](#submission-artefacts-typical-brief) | Screens, video, Lighthouse, a11y |
+
+---
+
+## Run the app
+
+Both paths below serve the same URL:
+
+> **http://localhost:3000**
+
+---
+
+### Local (Node.js)
+
+Use this when you want the fastest edit–refresh loop.
+
+| Step | Command |
+| ---: | --- |
+| 1 | `cd ui` |
+| 2 | `npm install` |
+| 3 | `npm run dev` |
+
+Then open **http://localhost:3000** in your browser.
+
+---
+
+### Docker
+
+Use this when you prefer a containerised stack (no local Node required on the host beyond Docker).
+
+**Working directory** — run every Docker command from the **project root**: the folder where **`docker-compose.yml`**, **`ui/`**, **`automation/`**, and **`README.md`** sit side by side.  
+If your terminal is somewhere else, `cd` to that folder first (example: `cd ~/Desktop/booking-flow` — adjust to your path).
+
+| Step | Action |
+| ---: | --- |
+| 1 | Install and start **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (or Docker Engine on Linux). |
+| 2 | Open a terminal **in the project root** (see above). |
+| 3 | Run `docker compose up --build`. |
+| 4 | When the container is ready, open **http://localhost:3000**. |
+
+**`zsh: command not found: docker`** — Docker is not installed or not on your `PATH`. Install/start Docker Desktop and use a new terminal. This is **not** fixed by `cd ui`.
+
+---
+
+## Playwright (E2E)
+
+Browser tests live under [`automation/playwright/tests/`](automation/playwright/tests/) (`*.ui.spec.ts` only). The app uses stable **`data-testid`** hooks so selectors stay reliable.
+
+### Prerequisites
+
+| Requirement | Command / note |
+| --- | --- |
+| UI dependencies | Once: `cd ui` → `npm install` (Playwright may start `npm run dev` in `ui/`). |
+| Automation deps | `cd automation` → `npm install` |
+| Browsers | `cd automation` → `npx playwright install` |
+
+### Run tests
+
+From **`automation/`**:
 
 ```bash
-cd ui
+cd automation
 npm install
-npm run dev
+npx playwright install
+npm test
 ```
 
-→ [http://localhost:3000](http://localhost:3000)
+**Two terminals (optional)** — You can leave **`npm run dev`** running in `ui/` in one terminal and run **`npm test`** in a **second** terminal. Playwright waits for **http://127.0.0.1:3000**; if something is already listening, it usually **reuses** it ([`reuseExistingServer`](automation/playwright.config.ts) when not in CI). If nothing is on port 3000, it starts **`npm run dev`** in `ui/` for you.
 
-**Run with Docker**
+**One terminal** — Stop the dev server (`Ctrl+C`), then run the block above; Playwright will bring the app up for the test run.
 
-From the **repository root** (the folder that contains [`docker-compose.yml`](docker-compose.yml) — **not** inside `ui/` or `automation/`). If your shell is somewhere else, `cd` there first, then:
+| Script | Purpose |
+| --- | --- |
+| `npm test` | Headless run: ensure app on `:3000`, run all specs |
+| `npm run test:ui-mode` | Playwright **UI Mode** (interactive / debug), same specs |
 
-```bash
-docker compose up --build
-```
+Optional env overrides: create **`automation/.env`** — see [`automation/common/config/config.ts`](automation/common/config/config.ts) (`BASE_URL`, `WEB_SERVER_URL`, `UI_PROJECT_DIR`, `WEB_SERVER_COMMAND`). HTML report: **`automation/report/`**.
 
-→ same URL as local dev: [http://localhost:3000](http://localhost:3000).
-
-**If you see `command not found: docker`:** install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (macOS/Windows) or Docker Engine for Linux, then open a new terminal so the `docker` command is on your `PATH`. That message is not fixed by `cd ui`.
-
-### First time — app, then tests (two terminals is OK)
-
-1. **Install UI dependencies** (needed once; Playwright’s dev server also runs commands inside `ui/`):
-
-   ```bash
-   cd ui
-   npm install
-   ```
-
-2. **Run the app and open it in a browser** (pick one):
-
-   - **Local:** in a terminal, `npm run dev` from `ui/`, then open [http://localhost:3000](http://localhost:3000).  
-   - **Docker:** from the repo root, `docker compose up --build`, same URL.
-
-3. **Run Playwright** — use a **second terminal** (new tab or window) so you do not have to stop the dev server in the first one:
-
-   ```bash
-   cd automation
-   npm install
-   npx playwright install
-   npm test
-   ```
-
-   **What happens:** Playwright tries to ensure something is listening on `http://127.0.0.1:3000`. If your first terminal still has `npm run dev` running, it will usually **reuse** that process instead of starting another (see `reuseExistingServer` in [`automation/playwright.config.ts`](automation/playwright.config.ts)). If nothing is on port 3000, Playwright starts `npm run dev` in `ui/` for you.
-
-   **Alternative:** stop the dev server (`Ctrl+C` in the first terminal), then run step 3 in one terminal only — Playwright will start the app again for the test run.
+**Flows covered:** (1) General → 4-yard → review → confirm → success. (2) Heavy → large skips disabled → 6-yard → confirm.
 
 ---
 
@@ -62,9 +101,9 @@ docker compose up --build
 | Path | Role |
 | --- | --- |
 | [`ui/`](ui/) | Next.js 14 (App Router): screens and `/api/*` routes |
-| [`automation/`](automation/) | Playwright (specs, page objects), manual test pack, sample bug reports |
+| [`automation/`](automation/) | Playwright (specs, page objects), [`manual-tests.md`](automation/manual-tests.md), [`bug-reports.md`](automation/bug-reports.md) |
 
-**Inside `automation/`** — `playwright/` (`.ui.spec.ts`, `*.page.ts`), `common/` (`config/`, `constants/`, `helpers/`), [`manual-tests.md`](automation/manual-tests.md), [`bug-reports.md`](automation/bug-reports.md).
+**Inside `automation/`** — `playwright/` (`.ui.spec.ts`, `*.page.ts`), `common/` (`config/`, `constants/`, `helpers/`).
 
 ---
 
@@ -91,32 +130,6 @@ docker compose up --build
 | `POST` | `/api/booking/confirm` |
 
 Query strings should use `heavyWaste=true` (not the stray `heavyWaste;=` typo from some briefs).
-
----
-
-## Playwright
-
-Every file under `playwright/tests` is a **browser E2E** test (only `*.ui.spec.ts`). The UI exposes stable **`data-testid`** attributes so tests do not depend on fragile CSS text.
-
-**Where to run commands:** from the `automation/` folder. It is normal to keep **`npm run dev`** running in one terminal and run **`npm test`** in **another** terminal at the same time.
-
-```bash
-cd automation
-npm install
-npx playwright install
-npm test
-```
-
-Playwright’s `webServer` setting waits for `http://127.0.0.1:3000`; locally it may start Next in `ui/` or attach to an already-running dev server (see note in **First time** above).
-
-| Script | What it does |
-| --- | --- |
-| `npm test` | Headless run: starts or reuses the app (see config), then runs all specs |
-| `npm run test:ui-mode` | Playwright **UI Mode** (interactive runner / debugger), same specs |
-
-Optional overrides in `automation/.env`: `BASE_URL`, `WEB_SERVER_URL`, `UI_PROJECT_DIR`, `WEB_SERVER_COMMAND` — see [`automation/common/config/config.ts`](automation/common/config/config.ts). After a run, open the HTML report under **`automation/report/`**.
-
-**Automated flows:** (1) General waste → 4-yard → review → confirm → success. (2) Heavy waste → large skips disabled → 6-yard → confirm.
 
 ---
 
