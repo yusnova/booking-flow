@@ -135,10 +135,10 @@
 | Field | Content |
 | --- | --- |
 | **Category** | Negative |
-| **Description** | Verify that choosing **Plasterboard** without selecting a handling option blocks **Continue**, shows an error, and does not navigate to the skip step. |
+| **Description** | Verify that choosing **Plasterboard** without selecting a handling option keeps **Continue** disabled so the user cannot reach the skip step until a handling option is chosen. |
 | **Preconditions** | **State:** Step 2; **Plasterboard** selected; no handling radio chosen. |
-| **Steps** | 1) Click **Plasterboard** tile. 2) Leave the three handling radios unset. 3) Click **Continue**. |
-| **Expected result** | Error message; remain on step 2; no navigation to skips. |
+| **Steps** | 1) Click **Plasterboard** tile. 2) Leave the three handling radios unset. 3) Observe the **Continue** control — do not select a handling option yet. |
+| **Expected result** | **Continue** stays **disabled** (or otherwise cannot submit step 2); user remains on waste step **2** and cannot open step **3** (skips) until a plasterboard handling option is selected. |
 
 ### MT-15
 
@@ -226,8 +226,8 @@
 | --- | --- |
 | **Category** | Positive |
 | **Description** | Verify that with **General** waste all eight skip sizes are enabled and none are incorrectly disabled for that profile. |
-| **Preconditions** | **State:** Step 3; **General** waste; session includes a completed `SW1A 1AA` postcode flow. |
-| **Steps** | 1) Open each skip row. 2) Check disabled flags vs heavy-only rules. |
+| **Preconditions** | **State:** App running; you will reach step 3 with **General** waste via the steps below (includes `SW1A 1AA` postcode flow). |
+| **Steps** | 1) **Step 1:** Look up `SW1A 1AA`, pick any address, click **Continue**. 2) **Step 2:** Choose **General** waste, click **Continue**. 3) **Step 3:** Open each skip size row and inspect enabled/disabled state. |
 | **Expected result** | All eight sizes **enabled** for general (no false disabled for this profile). |
 
 ### MT-24
@@ -245,10 +245,10 @@
 | Field | Content |
 | --- | --- |
 | **Category** | Positive |
-| **Description** | Verify that **Plasterboard** with **mixed** handling loads skip options consistent with mixed-load rules (not the whole list wrongly disabled). |
-| **Preconditions** | **State:** Step 2; **Plasterboard** + **Less than 10% mixed** handling. |
-| **Steps** | 1) Continue to step 3. 2) Inspect disabled pattern (should not wrongly disable entire list). |
-| **Expected result** | Skips load; not all sizes disabled; behaviour matches demo rule for mixed plasterboard. |
+| **Description** | Verify that **Plasterboard** with **Less than 10% mixed** handling does **not** apply the dedicated-only disables on small skips: **2-yard** and **3-yard** stay available. |
+| **Preconditions** | **State:** App running; you will reach step 3 with **Plasterboard** + **mixed** handling via the steps below. |
+| **Steps** | 1) **Step 1:** Complete postcode + address (e.g. `SW1A 1AA`), click **Continue**. 2) **Step 2:** Select **Plasterboard**, choose **Less than 10% plasterboard (mixed load)**, click **Continue**. 3) **Step 3:** Inspect each skip row. |
+| **Expected result** | In this demo, `heavyWaste` is false on this path, so **12-yard** and **14-yard** are **not** disabled by the heavy rule. The **dedicated** rule (which disables **2-yard** and **3-yard**) applies only when handling is **Dedicated plasterboard skip only** — with **mixed**, those two sizes remain **enabled**; all **eight** sizes should be selectable (no row wrongly disabled for mixed plasterboard). |
 
 ### MT-26
 
@@ -275,10 +275,10 @@
 | Field | Content |
 | --- | --- |
 | **Category** | Negative |
-| **Description** | Verify that pasted script markup in the manual address appears as literal text on review and does not execute in the browser (no alert). |
-| **Preconditions** | **State:** Manual address path; review reachable. |
-| **Steps** | 1) Paste `<script>alert(1)</script>` into manual address. 2) Continue to review. 3) Observe DOM / behaviour. |
-| **Expected result** | Text shown **literally** on review; **no** script execution / alert. |
+| **Description** | Verify that script-like input does not execute in the browser: invalid postcode paste is rejected safely; manual address paste is shown literally on review. |
+| **Preconditions** | **State:** App running; part A from step 1; part B requires manual-address path (e.g. `EC1A 1BB` empty list). |
+| **Steps** | 1) **Step 1 — UK postcode field:** Paste `<script>alert(1)</script>` into **UK postcode**, click **Look up**. Confirm **no** JavaScript alert fires; the app treats input as an invalid postcode (e.g. **Enter a valid UK postcode (e.g. SW1A 1AA).**). 2) **Manual address:** Look up `EC1A 1BB` (or enable manual address), paste `<script>alert(1)</script>` into the **manual address** textarea, add enough characters if required, **Continue** through waste/skip to **Review**. 3) On review, observe how the address line renders and whether any alert runs. |
+| **Expected result** | After step 1: **no** alert; validation/error for bad postcode, no successful lookup. After step 2–3: snippet appears as **plain text** on the review summary; **no** script execution / alert. |
 
 ### MT-29
 
