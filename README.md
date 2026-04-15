@@ -14,7 +14,7 @@
 | [Fixture postcodes](#fixture-postcodes) | Demo postcodes & waste rules |
 | [API (contract)](#api-contract) | REST routes |
 | [Mocking & data](#mocking--data) | Where data is built |
-| [Submission artefacts](#submission-artefacts-typical-brief) | Screens, video, Lighthouse, a11y |
+| [Submission artifacts](#submission-artifacts) | Lighthouse report, axe CLI output |
 
 ## Run the app
 
@@ -99,11 +99,22 @@ Query strings should use `heavyWaste=true` (not the stray `heavyWaste;=` typo fr
 - `BS1 4DJ` uses in-process state in [`ui/lib/postcode-state.ts`](ui/lib/postcode-state.ts); see [`automation/bug-reports.md`](automation/bug-reports.md) for the multi-session caveat.
 - E2E drives the real UI; no extra HTTP mocks beyond the app.
 
-## Submission artifacts 
+## Submission artifacts
 
-| # | What |
-| --- | --- |
-| 1 | **Screenshots** — For each important screen, save an image on a **narrow** window (phone width) and again on **desktop** width. Cover: postcode step after a successful lookup; BS1 first error then after retry; EC1A with no addresses (manual address); skip sizes with heavy waste (large skips turned off); review with prices; booking confirmed. |
-| 2 | **Screen recording** — One continuous clip from opening the app on step 1 through clicking confirm until the success page appears (about 1–2 minutes is enough). |
-| 3 | **Lighthouse** — `npx lighthouse http://localhost:3000 --only-categories=performance,accessibility,best-practices,seo --view` |
-| 4 | **A11y** — Lighthouse accessibility tab or `npx @axe-core/cli http://localhost:3000` |
+With the app running at **http://localhost:3000**, run the checks below. Each command tells you what to expect in the output.
+
+### Lighthouse
+
+```bash
+npx lighthouse http://localhost:3000 --only-categories=performance,accessibility,best-practices,seo --view
+```
+
+**What you’ll see:** Lighthouse finishes in the terminal with a short summary (scores and URL), then opens the **HTML report** in your default browser. The report shows **four category scores** (Performance, Accessibility, Best Practices, SEO) on a 0–100 scale, then expandable sections: metrics (e.g. First Contentful Paint, Largest Contentful Paint where applicable), opportunities, diagnostics, and passed audits. The **Accessibility** section lists specific checks (pass/fail) and links to documentation for each.
+
+### A11y (axe)
+
+```bash
+npx @axe-core/cli http://localhost:3000
+```
+
+**What you’ll see:** The CLI prints a **text summary** to the terminal: counts of violations, passes, and incomplete checks, followed by **per-issue lines** (rule id, impact, short description, and selector or snippet) when violations exist. If there are **no** accessibility violations for the loaded page, the output states that the page has no violations (or equivalent zero-violation summary). Exit code is non-zero when violations are found, so CI can fail on regressions.
