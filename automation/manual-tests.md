@@ -248,7 +248,7 @@
 | **Description** | Verify that **Plasterboard** with **Less than 10% mixed** handling does **not** apply the dedicated-only disables on small skips: **2-yard** and **3-yard** stay available. |
 | **Preconditions** | **State:** App running; you will reach step 3 with **Plasterboard** + **mixed** handling via the steps below. |
 | **Steps** | 1) **Step 1:** Complete postcode + address (e.g. `SW1A 1AA`), click **Continue**. 2) **Step 2:** Select **Plasterboard**, choose **Less than 10% plasterboard (mixed load)**, click **Continue**. 3) **Step 3:** Inspect each skip row. |
-| **Expected result** | In this demo, `heavyWaste` is false on this path, so **12-yard** and **14-yard** are **not** disabled by the heavy rule. The **dedicated** rule (which disables **2-yard** and **3-yard**) applies only when handling is **Dedicated plasterboard skip only** — with **mixed**, those two sizes remain **enabled**; all **eight** sizes should be selectable (no row wrongly disabled for mixed plasterboard). |
+| **Expected result** | heavyWaste is false on this path, so 12-yard and 14-yard are not disabled by the heavy rule. The dedicated rule (which disables 2-yard and 3-yard) applies only when handling is Dedicated plasterboard skip only — with mixed, those two sizes remain enabled; all eight sizes should be selectable (no row wrongly disabled for mixed plasterboard). |
 
 ### MT-26
 
@@ -285,9 +285,9 @@
 | Field | Content |
 | --- | --- |
 | **Category** | Negative |
-| **Description** | Verify that pasting a very long manual address keeps the UI scrollable and usable and does not freeze or corrupt the confirm flow. |
-| **Preconditions** | **State:** Manual path; textarea accepts paste. |
-| **Steps** | 1) Paste ~4000+ characters. 2) Scroll UI. 3) Attempt continue and confirm if allowed. |
+| **Description** | Verify that pasting a very long string into the **manual address** textarea (after `EC1A 1BB` lookup) keeps the UI scrollable and usable and does not freeze or corrupt the confirm flow. |
+| **Preconditions** | **State:** Step 1; you will use postcode `EC1A 1BB` and the manual-address textarea only. |
+| **Steps** | 1) **Step 1:** In **UK postcode**, enter `EC1A 1BB`, click **Look up**. 2) When the manual-address path is shown, click into the **manual address** textarea (the large text field for typing the address). 3) Paste a very long string (~4000+ characters) into that textarea only. 4) Scroll the page and the step panel so all controls remain reachable. 5) Click **Continue** as enabled and proceed; if the flow allows confirmation, complete through **Confirm** / success. |
 | **Expected result** | Layout remains usable (scroll); app does not freeze; validation or confirm behaves predictably. |
 
 ### MT-30
@@ -366,8 +366,8 @@
 | --- | --- |
 | **Category** | Positive |
 | **Description** | Verify that `POST /api/waste-types` with a valid contract body returns **200** and `{ "ok": true }`. |
-| **Preconditions** | **Tool:** REST client; valid JSON body per API contract. |
-| **Steps** | 1) `POST /api/waste-types` with `{ "heavyWaste": false, "plasterboard": false, "plasterboardOption": null }`. 2) Read body. |
+| **Preconditions** | **Tool:** REST client (Postman, Insomnia, Thunder Client, or `curl`); running app base URL (e.g. `http://localhost:3000`). |
+| **Steps** | 1) Open your REST client and create a **POST** request to `{baseUrl}/api/waste-types` (replace `{baseUrl}` with your app origin). 2) Set header **`Content-Type: application/json`**. 3) In the **body** tab, choose **raw** → **JSON** and paste exactly: `{ "heavyWaste": false, "plasterboard": false, "plasterboardOption": null }` — nothing else in the body. 4) **Send** the request. 5) Read the **HTTP status** in the response panel and the **response body** text. |
 | **Expected result** | **`{ "ok": true }`** and **200**. |
 
 ### MT-38
@@ -376,8 +376,8 @@
 | --- | --- |
 | **Category** | API failure |
 | **Description** | Verify that `GET /api/skips` with `postcode=SW1A1AA` and `heavyWaste=true` returns **200**, eight skip objects, each with `size`, `price`, and `disabled`. |
-| **Preconditions** | **Tool:** Browser or curl; URL-encoded query. |
-| **Steps** | 1) `GET /api/skips?postcode=SW1A1AA&heavyWaste=true`. 2) Parse JSON. |
+| **Preconditions** | **Tool:** Browser address bar, or `curl`; running app base URL. Query string must include both `postcode` and `heavyWaste` (values as below). |
+| **Steps** | 1) **Browser:** In the address bar, open `{baseUrl}/api/skips?postcode=SW1A1AA&heavyWaste=true` (no space in `SW1A1AA`; `&heavyWaste=true` is the second parameter). **Or terminal:** `curl -sS "{baseUrl}/api/skips?postcode=SW1A1AA&heavyWaste=true"` with your real base URL. 2) Confirm the response is JSON (not an HTML error page). 3) In the JSON, locate the **`skips`** array. 4) Count array elements and open each object to check field names. |
 | **Expected result** | **200**; `skips` array length **8**; each item has `size`, `price`, `disabled`. |
 
 ### MT-39
