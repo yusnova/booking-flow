@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "noEmit": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "common/*": ["common/*"],
+      "pages/*": ["playwright/pages/*"]
+    }
+  },
+  "include": ["playwright.config.ts", "common/**/*.ts", "playwright/**/*.ts"]
+}
