@@ -2,8 +2,6 @@
 
 # Booking flow
 
-Sample **waste skip booking** flow — postcode → waste type → skip size → review/confirm. **Next.js** UI, in-app API routes, deterministic fixtures, **Playwright** E2E.
-
 </div>
 
 > [!NOTE]
