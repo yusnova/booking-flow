@@ -21,7 +21,7 @@ export default defineConfig({
   timeout: 35_000,
   expect: { timeout: 15_000 },
   reporter: [
-    ["html", { outputFolder: "report", open: "never" }],
+    ["html", { outputFolder: "report", open: process.env.CI ? "never" : "always" }],
   ],
   use: {
     baseURL: configEnv.baseURL,
