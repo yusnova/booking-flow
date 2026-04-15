@@ -248,7 +248,7 @@
 | **Description** | Verify that **Plasterboard** with **Less than 10% mixed** handling does **not** apply the dedicated-only disables on small skips: **2-yard** and **3-yard** stay available. |
 | **Preconditions** | **State:** App running; you will reach step 3 with **Plasterboard** + **mixed** handling via the steps below. |
 | **Steps** | 1) **Step 1:** Complete postcode + address (e.g. `SW1A 1AA`), click **Continue**. 2) **Step 2:** Select **Plasterboard**, choose **Less than 10% plasterboard (mixed load)**, click **Continue**. 3) **Step 3:** Inspect each skip row. |
-| **Expected result** | heavyWaste is false on this path, so 12-yard and 14-yard are not disabled by the heavy rule. The dedicated rule (which disables 2-yard and 3-yard) applies only when handling is Dedicated plasterboard skip only — with mixed, those two sizes remain enabled; all eight sizes should be selectable (no row wrongly disabled for mixed plasterboard). |
+| **Expected result** | heavyWaste is false on this path, so 12-yard and 14-yard are not disabled by the heavy rule. The dedicated rule (which disables 2-yard and 3-yard) applies only when handling is Dedicated plasterboard skip only. |
 
 ### MT-26
 
@@ -374,7 +374,7 @@
 
 | Field | Content |
 | --- | --- |
-| **Category** | API failure |
+| **Category** | Positive |
 | **Description** | Verify that `GET /api/skips` with `postcode=SW1A1AA` and `heavyWaste=true` returns **200**, eight skip objects, each with `size`, `price`, and `disabled`. |
 | **Preconditions** | **Tool:** Browser address bar, or `curl`; running app base URL. Query string must include both `postcode` and `heavyWaste` (values as below). |
 | **Steps** | 1) **Browser:** In the address bar, open `{baseUrl}/api/skips?postcode=SW1A1AA&heavyWaste=true` (no space in `SW1A1AA`; `&heavyWaste=true` is the second parameter). **Or terminal:** `curl -sS "{baseUrl}/api/skips?postcode=SW1A1AA&heavyWaste=true"` with your real base URL. 2) Confirm the response is JSON (not an HTML error page). 3) In the JSON, locate the **`skips`** array. 4) Count array elements and open each object to check field names. |
