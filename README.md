@@ -91,8 +91,6 @@ npm test
 | `GET` | `/api/skips?postcode=…&heavyWaste=…` |
 | `POST` | `/api/booking/confirm` |
 
-Query strings should use `heavyWaste=true` (not the stray `heavyWaste;=` typo from some briefs).
-
 ## Mocking & data
 
 - No external APIs: responses are built in [`ui/app/api/`](ui/app/api/) using [`ui/lib/fixtures.ts`](ui/lib/fixtures.ts).
