@@ -2,7 +2,7 @@
 
 # Booking flow
 
-UK skip hire **multi-step booking** demo — Next.js UI, in-app API routes, deterministic fixtures, Playwright E2E.
+Sample **waste skip booking** flow — postcode → waste type → skip size → review/confirm. **Next.js** UI, in-app API routes, deterministic fixtures, **Playwright** E2E.
 
 </div>
 
@@ -43,17 +43,14 @@ Open **http://localhost:3000** in the browser.
 Containerised app; you only need Docker on the machine, not a local Node install for *running* the UI (images still build with Node inside Docker).
 
 > [!WARNING]
-> **Shell location** — Run `docker compose` from the **project root** (next to `docker-compose.yml`, `ui/`, `automation/`). **Not** from inside `ui/` or `automation/`. If the terminal is elsewhere, `cd` there first, e.g. `cd ~/Desktop/booking-flow` (use your real path).
+> **Shell location** — Run `docker compose` from the **project root**. **Not** from inside `ui/` or `automation/`. If the terminal is elsewhere, `cd` there first, e.g. `cd ~/Desktop/booking-flow` (use your real path).
 
 | Step | Action |
 | ---: | --- |
 | 1 | Install and start **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (or Docker Engine on Linux). |
-| 2 | Terminal **cwd** = project root (see callout above). |
-| 3 | `docker compose up --build` |
-| 4 | Open **http://localhost:3000** when the service is ready. |
+| 2 | `docker compose up --build` |
+| 3 | Open **http://localhost:3000** when the service is ready. |
 
-> [!CAUTION]
-> **`command not found: docker`** means Docker isn’t installed or not on your `PATH`. Fix that first — **`cd ui` does not help.**
 
 ## Playwright (E2E)
 
@@ -70,8 +67,6 @@ Containerised app; you only need Docker on the machine, not a local Node install
 
 ### Run tests
 
-From **`automation/`**:
-
 ```bash
 cd automation
 npm install
@@ -82,25 +77,12 @@ npm test
 > [!TIP]
 > **Two terminals** — You can keep **`npm run dev`** in `ui/` in one terminal and **`npm test`** in another. Playwright waits for **http://127.0.0.1:3000** and usually **reuses** an existing server ([`reuseExistingServer`](automation/playwright.config.ts) when not in CI). If nothing is listening, it starts **`npm run dev`** in `ui/` for you.
 
-**One terminal** — Stop dev (`Ctrl+C`), then run the commands above; Playwright starts the app for the run.
-
-| Script | Purpose |
-| --- | --- |
-| `npm test` | Headless: ensure app on `:3000`, run all specs |
-| `npm run test:ui-mode` | Playwright **UI Mode** (interactive / debug) |
-
-Optional **`automation/.env`**: [`automation/common/config/config.ts`](automation/common/config/config.ts) (`BASE_URL`, `WEB_SERVER_URL`, `UI_PROJECT_DIR`, `WEB_SERVER_COMMAND`). Report folder: **`automation/report/`**.
-
-**Flows covered:** (1) General → 4-yard → review → confirm → success. (2) Heavy → large skips disabled → 6-yard → confirm.
-
 ## Repository layout
 
 | Path | Role |
 | --- | --- |
 | [`ui/`](ui/) | Next.js 14 (App Router): screens and `/api/*` routes |
 | [`automation/`](automation/) | Playwright (specs, page objects), [`manual-tests.md`](automation/manual-tests.md), [`bug-reports.md`](automation/bug-reports.md) |
-
-**Inside `automation/`** — `playwright/` (`.ui.spec.ts`, `*.page.ts`), `common/` (`config/`, `constants/`, `helpers/`).
 
 ## Fixture postcodes
 
