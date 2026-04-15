@@ -52,14 +52,6 @@ Containerised app; you only need Docker on the machine, not a local Node install
 > [!NOTE]
 > **Automated checks** — Specs live under [`automation/playwright/tests/`](automation/playwright/tests/) (`*.ui.spec.ts`). The UI uses stable **`data-testid`** attributes for selectors.
 
-### Prerequisites
-
-| Requirement | Command / note |
-| --- | --- |
-| UI deps | Once: `cd ui` → `npm install` (Playwright may run `npm run dev` in `ui/`). |
-| Automation | `cd automation` → `npm install` |
-| Browsers | `cd automation` → `npx playwright install` |
-
 ### Run tests
 
 ```bash
@@ -90,7 +82,7 @@ npm test
 
 **Waste:** General · Heavy (disables **12-yard** & **14-yard**) · Plasterboard (three handling options; “Dedicated” also disables **2-yard** & **3-yard**).
 
-## API (contract)
+## API
 
 | Method | Endpoint |
 | --- | --- |
@@ -107,7 +99,7 @@ Query strings should use `heavyWaste=true` (not the stray `heavyWaste;=` typo fr
 - `BS1 4DJ` uses in-process state in [`ui/lib/postcode-state.ts`](ui/lib/postcode-state.ts); see [`automation/bug-reports.md`](automation/bug-reports.md) for the multi-session caveat.
 - E2E drives the real UI; no extra HTTP mocks beyond the app.
 
-## Submission artefacts (typical brief)
+## Submission artifacts 
 
 | # | What |
 | --- | --- |
