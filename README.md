@@ -4,8 +4,6 @@
 
 </div>
 
-> **What this is** — A small, self-contained demo you can run locally or in Docker; API responses come from Next route handlers, not external services.
-
 ## Contents
 
 | Section | What you’ll find |
